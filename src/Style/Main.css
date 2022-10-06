@@ -15,9 +15,6 @@
     align-items: center;
 }
 
-.content{
-    
-}
 
 .content__container {
     position: relative;
@@ -30,6 +27,7 @@
 }
 
 .content__title {
+    padding-top: 10px;
     text-align: center;
 }
 

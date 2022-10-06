@@ -1,22 +1,28 @@
 import React from 'react'
 import "../Style/Main.css"
-import {useState} from "react";
+import {useRef, useState} from "react";
 
 function Main() {
-  const [todoList, setTodoList] = useState([])
-  const [inputValue, setInputValue] = useState("")
-  const handleApp = () => {
-    setTodoList([...todoList,inputValue])
-    
+  const inputRef = useRef();
+  const [inputValue, setInputValue] = useState("");
+  const [todoList, setTodoList] = useState([]);
+  const handleAdd = () => {
+    if (inputValue !== "") {
+      setTodoList([...todoList,inputValue])
+      inputRef.current.focus()
+      setInputValue("")
+    } else {
+      alert("Enter your work")
+    }
   }
-  const handleOnChange = (e) => {
-    setInputValue(e.target.value);
-  }
-  const deleteHandler = (index) => {
-    const newTodoList = todoList.filter((value, id) => index !== id)
+  const handleDelete = (index) => {
+    console.log(index)
+    const newTodoList = todoList.filter((value,id) => index !== id)
     setTodoList(newTodoList)
   }
-  console.log(todoList);
+  const handleOnChange = (e) => {
+    setInputValue(e.target.value)
+  }
   return (
   <div className='main'>
     <div className='content'>
@@ -26,11 +32,13 @@ function Main() {
         </div>
         <input type = 'text'placeholder='Task name' className='content__input'
         onChange={(e) => handleOnChange(e)}
+        value = {inputValue}
+        ref = {inputRef}
         >
         </input>
         <div className='content__submit-button'>
           <button className='submit-btn'
-          onClick={handleApp}
+          onClick={handleAdd}
           > 
           Add task
           </button>
@@ -39,12 +47,12 @@ function Main() {
           {todoList.map((task,index) => (
             <div className='content__list row'>
               <div className='content__list-order '>{index + 1}</div>
-              <div className='content__list-desc '> {task}</div>
-              <button className='content__list-btn ' onClick={() => deleteHandler(index)}>DELETE</button>
+              <div className='content__list-desc '>{task}</div>
+              <button className='content__list-btn ' onClick={() => handleDelete(index)}>DELETE</button>
             </div>
           ))}
         </div>
-        <div className='content__footer'>You have {todoList.length} {todoList.length > 1 ? "tasks" : "task"}</div>
+        <div className='content__footer'>You have {todoList.length} {todoList.length>1 ? "tasks" : "task"} </div>
       </div>
     </div>
   </div>
