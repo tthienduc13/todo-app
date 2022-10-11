@@ -1,18 +1,32 @@
 import React from 'react'
+import Task from './Task';
+import Input from './Input';
 import "../Style/Main.css"
-import {useRef, useState} from "react";
+import {useRef, useState, useEffect} from "react";
 
 function Main() {
   const inputRef = useRef();
   const [inputValue, setInputValue] = useState("");
-  const [todoList, setTodoList] = useState([]);
+  const [todoList, setTodoList] = useState(JSON.parse(localStorage.getItem('todoList')) ?? []);
+  useEffect(() => {
+    localStorage.setItem('todoList', JSON.stringify(todoList))
+  },[todoList])
+  useEffect(() => {
+    console.log(todoList);
+  }, [])
   const handleAdd = () => {
     if (inputValue !== "") {
       setTodoList([...todoList,inputValue])
       inputRef.current.focus()
       setInputValue("")
+      
     } else {
       alert("Enter your work")
+    }
+  }
+  const handleEnter = (e) => {
+    if (e.code === "Enter") {
+      handleAdd()
     }
   }
   const handleDelete = (index) => {
@@ -30,12 +44,7 @@ function Main() {
         <div className='content__title'>
           <h1>TODO APP</h1>
         </div>
-        <input type = 'text'placeholder='Task name' className='content__input'
-        onChange={(e) => handleOnChange(e)}
-        value = {inputValue}
-        ref = {inputRef}
-        >
-        </input>
+        <Input  functionChange={(e) => handleOnChange(e)} inputValue = {inputValue} inputRef = {inputRef} functionEnter={(e) => handleEnter(e)}></Input>
         <div className='content__submit-button'>
           <button className='submit-btn'
           onClick={handleAdd}
@@ -45,11 +54,7 @@ function Main() {
         </div>
         <div className='content__todo-list'>
           {todoList.map((task,index) => (
-            <div className='content__list row'>
-              <div className='content__list-order '>{index + 1}</div>
-              <div className='content__list-desc '>{task}</div>
-              <button className='content__list-btn ' onClick={() => handleDelete(index)}>DELETE</button>
-            </div>
+            <Task key={index} info ={task} index = {index} functionDelete = {() => handleDelete(index)}></Task>
           ))}
         </div>
         <div className='content__footer'>You have {todoList.length} {todoList.length>1 ? "tasks" : "task"} </div>
